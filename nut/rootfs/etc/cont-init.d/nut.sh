@@ -11,6 +11,7 @@ declare shutdowncmd
 declare upsmonpwd
 declare username
 
+mkdir -p /var{/run/nut,/state/ups}
 chown root:root /var/run/nut
 chmod 0770 /var/run/nut
 

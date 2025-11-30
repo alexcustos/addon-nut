@@ -1,22 +1,46 @@
 ARG BUILD_FROM=ghcr.io/hassio-addons/debian-base:9.1.0
 # hadolint ignore=DL3006
-FROM ${BUILD_FROM}
+FROM ${BUILD_FROM} AS base
 
-# Setup base
+FROM base AS builder
+
+# Setup builder
 # hadolint ignore=DL3003
 RUN \
     apt-get update \
     && apt-get install -y --no-install-recommends \
-        nut=2.8.1-5 \
-        nut-snmp=2.8.1-5 \
-        nut-xml=2.8.1-5 \
-        nut-modbus=2.8.1-5 \
-        usbutils=1:018-2 \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
+        build-essential libtool autoconf automake pkg-config \
+        libusb-1.0-0-dev libsnmp-dev libssl-dev libxml2-dev libmodbus-dev libltdl-dev
+
+RUN \
+    mkdir -p /{app,build} \
+    && cd /build \
+    && curl -L -O https://github.com/networkupstools/nut/releases/download/v2.8.4/nut-2.8.4.tar.gz \
+    && tar -xzvf nut-2.8.4.tar.gz \
+    && cd nut-2.8.4 \
+    && ./configure --prefix=/usr --sysconfdir=/etc/nut --enable-static \
+        --with-usb --with-modbus --with-snmp --with-nut-scanner --with-ssl \
+    && make \
+    && make DESTDIR=/app install
+
+
+FROM base AS app
 
 # Copy root filesystem
 COPY rootfs /
+
+# Copy nut files
+COPY --from=builder /app /
+
+ENV NUT_QUIET_INIT_UPSNOTIFY=true
+
+# Setup app
+# hadolint ignore=DL3003
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+        usbutils=1:018-2 \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
 
 # Build arguments
 ARG BUILD_ARCH
