@@ -18,7 +18,8 @@ RUN \
     && curl -L -O https://github.com/networkupstools/nut/releases/download/v2.8.4/nut-2.8.4.tar.gz \
     && tar -xzvf nut-2.8.4.tar.gz \
     && cd nut-2.8.4 \
-    && ./configure --prefix=/usr --sysconfdir=/etc/nut --enable-static \
+    && ./configure --prefix=/usr --datadir=/usr/share/nut --sysconfdir=/etc/nut --with-drvpath=/usr/libexec/nut \
+        --enable-static \
         --with-usb --with-modbus --with-snmp --with-nut-scanner --with-ssl \
     && make \
     && make DESTDIR=/app install
