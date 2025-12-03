@@ -4,6 +4,8 @@ FROM ${BUILD_FROM} AS base
 
 FROM base AS builder
 
+ARG NUT_VERSION=2.8.4
+
 # Setup builder
 # hadolint ignore=DL3003
 RUN \
@@ -15,9 +17,14 @@ RUN \
 RUN \
     mkdir -p /{app,build} \
     && cd /build \
-    && curl -L -O https://github.com/networkupstools/nut/releases/download/v2.8.4/nut-2.8.4.tar.gz \
-    && tar -xzvf nut-2.8.4.tar.gz \
-    && cd nut-2.8.4 \
+    && NUT_FILENAME="nut-${NUT_VERSION}.tar.gz" \
+    && NUT_RELEASES_URL="https://github.com/networkupstools/nut/releases" \
+    && NUT_DOWNLOAD_URL="${NUT_RELEASES_URL}/download/v${NUT_VERSION}/${NUT_FILENAME}" \
+    && curl -L -O "${NUT_DOWNLOAD_URL}" \
+    && curl -L -O "${NUT_DOWNLOAD_URL}.sha256" \
+    && sha256sum --check "${NUT_FILENAME}.sha256" \
+    && tar -xzvf ${NUT_FILENAME} \
+    && cd ${NUT_FILENAME%.tar.gz} \
     && ./configure --prefix=/usr --datadir=/usr/share/nut --sysconfdir=/etc/nut --with-drvpath=/usr/libexec/nut \
         --enable-static \
         --with-usb --with-modbus --with-snmp --with-nut-scanner --with-ssl \
