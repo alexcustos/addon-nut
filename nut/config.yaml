@@ -1,5 +1,5 @@
 ---
-name: Network UPS Tools v2.8.4
+name: Network UPS Tools
 version: dev
 slug: nut
 description: Manage battery backup (UPS) devices
