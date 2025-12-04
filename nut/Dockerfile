@@ -18,8 +18,7 @@ RUN \
     mkdir -p /{app,build} \
     && cd /build \
     && NUT_FILENAME="nut-${NUT_VERSION}.tar.gz" \
-    && NUT_RELEASES_URL="https://github.com/networkupstools/nut/releases" \
-    && NUT_DOWNLOAD_URL="${NUT_RELEASES_URL}/download/v${NUT_VERSION}/${NUT_FILENAME}" \
+    && NUT_DOWNLOAD_URL="https://github.com/networkupstools/nut/releases/download/v${NUT_VERSION}/${NUT_FILENAME}" \
     && curl -L -O "${NUT_DOWNLOAD_URL}" \
     && curl -L -O "${NUT_DOWNLOAD_URL}.sha256" \
     && sha256sum --check "${NUT_FILENAME}.sha256" \
