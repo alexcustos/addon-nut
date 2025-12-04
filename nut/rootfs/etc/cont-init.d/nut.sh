@@ -11,9 +11,10 @@ declare shutdowncmd
 declare upsmonpwd
 declare username
 
-mkdir -p /var{/run/nut,/state/ups}
-chown root:root /var/run/nut
-chmod 0770 /var/run/nut
+mkdir -p /var/state/ups
+mkdir -p /run/nut
+chown root:root /run/nut
+chmod 0770 /run/nut
 
 chown -R root:root /etc/nut
 find /etc/nut -not -perm 0660 -type f -exec chmod 0660 {} \;
