@@ -39,8 +39,6 @@ COPY rootfs /
 # Copy nut files
 COPY --from=builder /app /
 
-ENV NUT_QUIET_INIT_UPSNOTIFY=true
-
 # Setup app
 # hadolint ignore=DL3003
 RUN apt-get update \
@@ -48,6 +46,13 @@ RUN apt-get update \
         usbutils=1:018-2 \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
+
+# App environment
+
+# Suppress warnings related to s6 not supporting lifecycle notifications
+# Note: Unset this variable for debugging purposes
+# ? Documentation: https://networkupstools.org/docs/man/nut.conf.html
+ENV NUT_QUIET_INIT_UPSNOTIFY=true
 
 # Build arguments
 ARG BUILD_ARCH
